@@ -18,21 +18,21 @@
 
 const int RIGHT_TOP_ENDSTOP = 4;    // The top endstop for the right elevation.
 const int RIGHT_BOTTOM_ENDSTOP = 5; // The bottom endstop for the right elevation.
-const int LEFT_TOP_ENDSTOP = 14;    // The top endstop for the left elevation
-const int LEFT_BOTTOM_ENDSTOP = 15; // The bottom endstop for the left elevation
+//const int LEFT_TOP_ENDSTOP = 14;    // The top endstop for the left elevation
+//const int LEFT_BOTTOM_ENDSTOP = 15; // The bottom endstop for the left elevation
 
 const int LEFT_ENDSTOP = 10; // The left endstop for the turntable.
 const int RIGHT_ENDSTOP = 3; // The right endstop for the turntable.
 
 const int RIGHT_ELEVATOR_SPEED = 6; // Speed pin for right motors. --- ENB
-const int RIGHT_ELEVATOR_CCW = 8;   // CCW pin for the right elevator motors. --- IN4
-const int RIGHT_ELEVATOR_CW = 7;    // CW pin for the right elevator motors. --- IN3
+const int TURNTABLE_CCW = 8;   // CCW pin for the right elevator motors. --- IN4
+const int TURNTABLE_CW = 7;    // CW pin for the right elevator motors. --- IN3
 const int LEFT_ELEVATOR_CW = 11;    // CW pin for left elevator motors. --- IN2
 const int LEFT_ELEVATOR_CCW = 12;   // CCW pin for left elevator motors. --- IN1
 const int LEFT_ELEVATOR_SPEED = 9;  // Speed pin for left motors. --- ENA
 
-const int TURNTABLE_CW = 1;  // CW pin for the turntable motor
-const int TURNTABLE_CCW = 2; // CCW pin for the turntable motor
+const int RIGHT_ELEVATOR_CW = 1;  // CW pin for the turntable motor
+const int RIGHT_ELEVATOR_CCW = 2; // CCW pin for the turntable motor
 
 const int IR_RECEIVER = 10; // Data pin for the IR receiver.
 
@@ -44,6 +44,9 @@ const int ROTATIONAL_SPEED = 200; // The motor speed for the turntable.
 boolean elevation_status = false; // False is lowered, true is raised.
 
 uint32_t light_toggle_delay = 0; // This variable stores the time that the next light toggle should be at
+
+
+
 
 // While any motor is rotating flash red warning lights, if the IR receiver has been given an
 // emergency stop signal run the emergency stop function.
@@ -68,6 +71,9 @@ void motor_check()
   }
 }
 
+
+
+
 // Disables every pin and freezes the program until a hard restart.
 // A hard restart is either pressing the button on the top left corner or removing power temporarily.
 void emergency_stop()
@@ -82,33 +88,31 @@ void emergency_stop()
   }
 }
 
+
+
+
 // Using a boolean for the direction rotates the platform either clockwise (True) or counter-clockwise (False).
 void rotate_turntable(bool direction)
 {
-  if (elevation_status) // If the elevator is currently raised
+  if (elevation_status)
   {
-    return; // Cancel the function
+    return;
   }
-
-  // Rotates the turntable clockwise.
   if (direction)
-  {
+  {                          // Rotates the turntable clockwise.
     digitalWrite(TURNTABLE_CW, HIGH); // Start rotating the motor clockwise.
-
-    // Wait until the left and right endstops are off
     while (digitalRead(LEFT_ENDSTOP) == 0 && digitalRead(RIGHT_ENDSTOP) == 0)
     {
       motor_check();
-    }
-    // Once an endstop is activated
+    } // Wait until the left and right endstops are off
     while (digitalRead(LEFT_ENDSTOP) == 1 && digitalRead(RIGHT_ENDSTOP) == 1)
     {
       motor_check();
-    }
+    }                       // Once an endstop is activated
     digitalWrite(TURNTABLE_CW, LOW); // Stop rotating the motor.
   }
   else
-  {                                    // CCW.
+  {                           // CCW.
     digitalWrite(TURNTABLE_CCW, HIGH); // Start rotating the motor counter-clockwise.
     while (digitalRead(LEFT_ENDSTOP) == 0 && digitalRead(RIGHT_ENDSTOP) == 0)
     {
@@ -117,12 +121,15 @@ void rotate_turntable(bool direction)
     while (digitalRead(LEFT_ENDSTOP) == 1 && digitalRead(RIGHT_ENDSTOP) == 1)
     {
       motor_check();
-    } // Once an endstop is activated
+    }                        // Once an endstop is activated
     digitalWrite(TURNTABLE_CCW, LOW); // Stop rotating the motor.
   }
 
-  digitalWrite(RED_LED, !digitalRead(RED_LED));
+  digitalWrite(RED_LED, LOW);
 }
+
+
+
 
 // Using a boolean either raises (True) or lowers (False) the platform.
 void elevate_turntable(bool direction)
@@ -149,14 +156,7 @@ void elevate_turntable(bool direction)
       digitalWrite(RIGHT_ELEVATOR_CCW, HIGH); // Turn on the elevation motors.
       while (digitalRead(RIGHT_BOTTOM_ENDSTOP) == 1)
       {
-        if (IrReceiver.decode())
-        {
-          if (IrReceiver.decodedIRData.decodedRawData == 0xE916FF00)
-          {
-            emergency_stop();
-          }
-          IrReceiver.resume();
-        }
+        motor_check();
       } // Once the endstop is active
       digitalWrite(LEFT_ELEVATOR_CCW, LOW);  // Turn on the elevation motors.
       digitalWrite(RIGHT_ELEVATOR_CCW, LOW); // Turn on the elevation motors.
@@ -214,8 +214,8 @@ void setup()
   pinMode(TURNTABLE_CW, OUTPUT);
   pinMode(TURNTABLE_CCW, OUTPUT);
 
-  pinMode(LEFT_TOP_ENDSTOP, INPUT_PULLUP);
-  pinMode(LEFT_BOTTOM_ENDSTOP, INPUT_PULLUP);
+  //pinMode(LEFT_TOP_ENDSTOP, INPUT_PULLUP);
+  //pinMode(LEFT_BOTTOM_ENDSTOP, INPUT_PULLUP);
   pinMode(RIGHT_TOP_ENDSTOP, INPUT_PULLUP);
   pinMode(RIGHT_BOTTOM_ENDSTOP, INPUT_PULLUP);
 

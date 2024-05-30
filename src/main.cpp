@@ -31,8 +31,8 @@ const int LEFT_ELEVATOR_CW = 11;    // CW pin for left elevator motors. --- IN2
 const int LEFT_ELEVATOR_CCW = 12;   // CCW pin for left elevator motors. --- IN1
 const int LEFT_ELEVATOR_SPEED = 9;  // Speed pin for left motors. --- ENA
 
-const int RIGHT_ELEVATOR_CW = 1;  // CW pin for the turntable motor
-const int RIGHT_ELEVATOR_CCW = 2; // CCW pin for the turntable motor
+const int RIGHT_ELEVATOR_CW = 0;  // CW pin for the turntable motor
+const int RIGHT_ELEVATOR_CCW = 1; // CCW pin for the turntable motor
 
 const int IR_RECEIVER = 10; // Data pin for the IR receiver.
 
